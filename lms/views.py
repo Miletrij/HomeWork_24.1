@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from lms.models import Course, Lesson
 from lms.serializers import CourseSerializer, LessonSerializer
+
 from user.permissions import IsModerator
 
 
@@ -29,7 +30,6 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated, ~IsModerator]
         if self.action == 'destroy':
             self.permission_classes = [IsAuthenticated, ~IsModerator]
-        return super().get_permissions()
 
 
 class LessonCreateAPIView(CreateAPIView):
