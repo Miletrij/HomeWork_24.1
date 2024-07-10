@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from lms.models import Course, Lesson, Subscription
 from lms.paginators import LMSPagination
 from lms.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
-from user.permissions import IsModerator
+from user.permissions import IsModerator, IsOwner
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -28,17 +28,17 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['update', 'partial_update', 'list', 'retrieve']:
-            self.permission_classes = [IsAuthenticated, IsModerator]
+            self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
         if self.action == 'create':
             self.permission_classes = [IsAuthenticated, ~IsModerator]
         if self.action == 'destroy':
-            self.permission_classes = [IsAuthenticated, ~IsModerator]
+            self.permission_classes = [IsAuthenticated, ~IsModerator | IsOwner]
         return super().get_permissions()
 
 
 class LessonCreateAPIView(CreateAPIView):
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated, ~IsModerator]
+    permission_classes = [IsAuthenticated, ~IsModerator | IsOwner]
 
     def perform_create(self, serializer):
         lesson = serializer.save()
@@ -62,18 +62,18 @@ class LessonListAPIView(ListAPIView):
 class LessonRetrieveAPIView(RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, IsModerator]
+    permission_classes = [IsAuthenticated, IsModerator | IsOwner]
 
 
 class LessonUpdateAPIView(UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, IsModerator]
+    permission_classes = [IsAuthenticated, IsModerator | IsOwner]
 
 
 class LessonDestroyAPIView(DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, ~IsModerator]
+    permission_classes = [IsAuthenticated, ~IsModerator | IsOwner]
 
 
 class SubscriptionCreateAPIView(CreateAPIView):
