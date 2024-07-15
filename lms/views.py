@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from lms.models import Course, Lesson, Subscription
 from lms.paginators import LMSPagination
+from lms.tasks import send_email
 from lms.serializers import CourseSerializer, LessonSerializer, SubscriptionSerializer
 from user.permissions import IsModerator, IsOwner
 
@@ -35,6 +36,11 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated, ~IsModerator | IsOwner]
         return super().get_permissions()
 
+    # def perform_update(self, serializer):
+    #     course = serializer.save()
+    #     send_email.delay(course)
+    #     course.save()
+
 
 class LessonCreateAPIView(CreateAPIView):
     serializer_class = LessonSerializer
@@ -43,6 +49,7 @@ class LessonCreateAPIView(CreateAPIView):
     def perform_create(self, serializer):
         lesson = serializer.save()
         lesson.owner = self.request.user
+        send_email.delay(lesson.course.pk)
         lesson.save()
 
 
