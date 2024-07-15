@@ -10,6 +10,7 @@ class Course(models.Model):
     image = models.ImageField(upload_to='course', verbose_name='картинка', **NULLABLE)
     content = models.TextField(verbose_name='описание', **NULLABLE)
     owner = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец', **NULLABLE)
+    amount = models.PositiveIntegerField(verbose_name='стоимость курса', **NULLABLE)
 
     def __str__(self):
         return self.title
@@ -26,6 +27,7 @@ class Lesson(models.Model):
     url = models.URLField(verbose_name='видео по ссылке', **NULLABLE)
     course = models.ForeignKey(Course, verbose_name='курсы', on_delete=models.CASCADE)
     owner = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='владелец', **NULLABLE)
+    amount = models.PositiveIntegerField(verbose_name='стоимость урока', **NULLABLE)
 
     def __str__(self):
         return self.title
