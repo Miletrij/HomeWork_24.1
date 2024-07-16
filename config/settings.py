@@ -160,7 +160,7 @@ CELERY_BACKEND_URL = os.getenv('CELERY_BACKEND_URL')
 CELERY_BEAT_SCHEDULE = {
     'send reminder': {
         'task': 'user.tasks.check_last_login',
-        'schedule': timedelta(seconds=10),
+        'schedule': timedelta(minutes=1),
     },
 }
 
